@@ -2,7 +2,7 @@ class_name EnetTransport
 extends RefCounted
 
 
-class EnetTransportClient extends Network.TransportClient:
+class EnetTransportClient extends Transport.TransportClient:
 	const MAX_EVENTS_PER_TICK: int = 64
 
 	var _enet_host: ENetConnection
@@ -50,7 +50,7 @@ class EnetTransportClient extends Network.TransportClient:
 					packet_received.emit(packet)
 
 
-class EnetTransportServer extends Network.TransportServer:
+class EnetTransportServer extends Transport.TransportServer:
 	const MAX_EVENTS_PER_TICK: int = 64
 
 	var _enet_host: ENetConnection

@@ -2,7 +2,7 @@ class_name FramedTransport
 extends RefCounted
 
 
-class FramedTransportClient extends Network.TransportClient:
+class FramedTransportClient extends Transport.TransportClient:
 	const PREFIX_LEN: int = 2
 	const MAX_PACKET_SIZE: int = 1024 * 4
 	const MAX_PACKET_BACKLOG: int = 32
@@ -80,7 +80,7 @@ class FramedTransportClient extends Network.TransportClient:
 		packet_received.emit(packet_buf)
 
 
-class FramedTransportServer extends Network.TransportServer:
+class FramedTransportServer extends Transport.TransportServer:
 	const PREFIX_LEN: int = 2
 	const MAX_PACKET_SIZE: int = 1024 * 4
 	const MAX_PACKET_BACKLOG: int = 32
