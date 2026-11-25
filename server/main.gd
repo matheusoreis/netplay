@@ -9,6 +9,15 @@ var _database: Database
 
 var _loop: Loop
 
+var _account_repository: AccountRepository
+var _character_repository: CharacterRepository
+
+var _account_manager: AccountManager
+var _character_manager: CharacterManager
+
+var _account_handler: AccountHandler
+var _character_handler: CharacterHandler
+
 
 func _ready() -> void:
 	if not _start_database():
@@ -62,7 +71,7 @@ func _start_network(kind: Enums.TransportKind) -> bool:
 	network.client_disconnected.connect(_on_client_disconnected)
 
 	await _setup_managers()
-	await _setup_events()
+	await _setup_handlers()
 
 	print("[SERVER] Iniciando servidor (%s) em %s..." % [
 		str(Enums.TransportKind.find_key(kind)), Constants.ENDPOINT
@@ -79,12 +88,28 @@ func _start_network(kind: Enums.TransportKind) -> bool:
 	return true
 
 
+func _setup_repositories() -> void:
+	await get_tree().process_frame
+
+	_account_repository = AccountRepository.new()
+	await _account_repository.setup(_database)
+
+	_character_repository = CharacterRepository.new()
+	await _character_repository.setup(_database)
+
+
 func _setup_managers() -> void:
 	await get_tree().process_frame
 
+	_account_manager = AccountManager.new(_account_repository)
+	_character_manager = CharacterManager.new(_character_repository)
 
-func _setup_events() -> void:
+
+func _setup_handlers() -> void:
 	await get_tree().process_frame
+
+	_account_handler = AccountHandler.new(_network)
+	_character_handler = CharacterHandler.new(_network)
 
 
 func _create_transport(kind: Enums.TransportKind) -> Transport.TransportServer:
@@ -109,8 +134,11 @@ func _kind_from_args(fallback: Enums.TransportKind) -> Enums.TransportKind:
 
 
 func _on_client_connected(peer_id: int) -> void:
-	print("Cliente %d conectado." % peer_id)
+	print("[SERVER] Cliente %d conectado." % peer_id)
 
 
 func _on_client_disconnected(peer_id: int) -> void:
-	print("Cliente %d desconectado." % peer_id)
+	print("[SERVER] Cliente %d desconectado." % peer_id)
+
+	await _character_manager.remove(peer_id)
+	_account_manager.remove(peer_id)

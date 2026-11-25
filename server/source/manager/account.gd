@@ -26,6 +26,10 @@ func has(peer_id: int) -> bool:
 
 
 func remove(peer_id: int) -> void:
+	var account: Account = by_peer(peer_id)
+	if account == null:
+		return
+
 	_accounts.erase(peer_id)
 
 

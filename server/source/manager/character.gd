@@ -25,10 +25,6 @@ func has(peer_id: int) -> bool:
 	return _characters.has(peer_id)
 
 
-func remove(peer_id: int) -> void:
-	_characters.erase(peer_id)
-
-
 func peer_of(identifier: String) -> int:
 	var lowered: String = identifier.to_lower()
 
@@ -36,7 +32,7 @@ func peer_of(identifier: String) -> int:
 		if _characters[peer_id].identifier.to_lower() == lowered:
 			return peer_id
 
-	return -1
+	return 0
 
 
 func is_online(character_id: int) -> bool:
@@ -84,6 +80,21 @@ func select(peer_id: int, account_id: int, character_id: int) -> Array:
 	_characters[peer_id] = character
 
 	return [OK, character]
+
+
+func remove(peer_id: int) -> void:
+	var character: Character = by_peer(peer_id)
+	if character == null:
+		return
+
+	await _repository.update_location(
+		character.id,
+		character.map_id,
+		character.cell,
+		character.facing
+	)
+
+	_characters.erase(peer_id)
 
 
 func _validate(peer_id: int, character_id: int) -> Array:
