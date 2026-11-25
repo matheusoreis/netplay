@@ -7,11 +7,13 @@ enum TransportKind {
 	ENET,
 }
 
+
 enum PacketKind {
 	EXEC,
 	INVOKE,
 	RESULT,
 }
+
 
 enum CellFlag {
 	NONE = 0,
