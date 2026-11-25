@@ -17,33 +17,29 @@ func _setup_schema() -> void:
 
 
 func sign_in(email: String, password: String) -> Array:
-	var account: AccountModel = await _row(
+	var model: AccountModel = await _row(
 		"SELECT * FROM accounts WHERE email = ?",
 		[email],
 		AccountModel
 	)
 
-	if not account:
+	if model == null:
 		return [ERR_DOES_NOT_EXIST, "ACCOUNT_NOT_FOUND"]
 
-	if not _verify_password(password, account.password):
+	if not _verify_password(password, model.password):
 		return [ERR_UNAUTHORIZED, "INCORRECT_PASSWORD"]
 
-	return [OK, account]
+	return [OK, model]
 
 
 func sign_up(email: String, password: String) -> Array:
-	var existing: Variant = await _scalar(
-		"SELECT COUNT(*) FROM accounts WHERE email = ?",
-		[email]
-	)
-
-	if existing != null and existing > 0:
+	if await _exists("SELECT 1 FROM accounts WHERE email = ? LIMIT 1", [email]):
 		return [ERR_ALREADY_EXISTS, "EMAIL_ALREADY_REGISTERED"]
 
+	var now: int = _now()
 	var result: Error = await _exec(
 		"INSERT INTO accounts (email, password, access_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
-		[email, _hash_password(password), _now(), _now(), _now()]
+		[email, _hash_password(password), now, now, now]
 	)
 
 	if result != OK:
@@ -52,14 +48,14 @@ func sign_up(email: String, password: String) -> Array:
 	return [OK, null]
 
 
-func update_account_access_at(account_id: int) -> void:
+func update_access_at(account_id: int) -> void:
 	await _exec(
 		"UPDATE accounts SET access_at = ? WHERE id = ?",
 		[_now(), account_id]
 	)
 
 
-func update_account_updated_at(account_id: int) -> void:
+func update_updated_at(account_id: int) -> void:
 	await _exec(
 		"UPDATE accounts SET updated_at = ? WHERE id = ?",
 		[_now(), account_id]
