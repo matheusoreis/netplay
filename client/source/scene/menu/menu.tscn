@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cbp2r63mkijox"]
+
+[sub_resource type="GDScript" id="GDScript_mhoos"]
+script/source = "extends Scene
+"
+
+[node name="Menu" type="Node" unique_id=1497405168]
+script = SubResource("GDScript_mhoos")
+metadata/_custom_type_script = "uid://c0uikxaej1jws"
