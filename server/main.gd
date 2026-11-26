@@ -34,6 +34,12 @@ func _physics_process(_delta: float) -> void:
 		_network.poll()
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		await _shutdown()
+		get_tree().quit()
+
+
 func _start_database() -> bool:
 	var database: Database = Database.new()
 
@@ -45,6 +51,8 @@ func _start_database() -> bool:
 		return false
 
 	_database = database
+
+	_setup_repositories()
 
 	print("[DATABASE] Banco de dados iniciado com sucesso!")
 	return true
@@ -70,9 +78,6 @@ func _start_network(kind: Enums.TransportKind) -> bool:
 	network.client_connected.connect(_on_client_connected)
 	network.client_disconnected.connect(_on_client_disconnected)
 
-	await _setup_managers()
-	await _setup_handlers()
-
 	print("[SERVER] Iniciando servidor (%s) em %s..." % [
 		str(Enums.TransportKind.find_key(kind)), Constants.ENDPOINT
 	])
@@ -83,6 +88,9 @@ func _start_network(kind: Enums.TransportKind) -> bool:
 		return false
 
 	_network = network
+
+	await _setup_managers()
+	await _setup_handlers()
 
 	print("[SERVER] Servidor iniciado com sucesso!")
 	return true
@@ -131,6 +139,12 @@ func _kind_from_args(fallback: Enums.TransportKind) -> Enums.TransportKind:
 			return Enums.TransportKind[key] as Enums.TransportKind
 
 	return fallback
+
+
+func _shutdown() -> void:
+	for character: Character in _character_manager.all():
+		var peer_id: int = _character_manager.peer_of(character.identifier)
+		await _character_manager.remove(peer_id)
 
 
 func _on_client_connected(peer_id: int) -> void:
