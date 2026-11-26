@@ -7,6 +7,10 @@ const MINOR_VERSION: int = 0
 const REVISION_VERSION: int = 0
 
 
+const DATABASE_PATH: String = "user://database/"
+const DATABASE_FILENAME: String = "database"
+
+
 const ENDPOINT: String = "127.0.0.1:4242"
 
 
