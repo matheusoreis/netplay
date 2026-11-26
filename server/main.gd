@@ -116,8 +116,8 @@ func _setup_managers() -> void:
 func _setup_handlers() -> void:
 	await get_tree().process_frame
 
-	_account_handler = AccountHandler.new(_network)
-	_character_handler = CharacterHandler.new(_network)
+	_account_handler = AccountHandler.new(_network, _account_manager)
+	_character_handler = CharacterHandler.new(_network, _account_manager, _character_manager)
 
 
 func _create_transport(kind: Enums.TransportKind) -> Transport.TransportServer:

@@ -82,6 +82,17 @@ func select(peer_id: int, account_id: int, character_id: int) -> Array:
 	return [OK, character]
 
 
+func delete(account_id: int, character_id: int) -> Array:
+	if is_online(character_id):
+		return [ERR_ALREADY_IN_USE, "CHARACTER_IN_USE"]
+
+	var result: Array = await _repository.delete(character_id, account_id)
+	if result[0] != OK:
+		return result
+
+	return [OK, null]
+
+
 func remove(peer_id: int) -> void:
 	var character: Character = by_peer(peer_id)
 	if character == null:

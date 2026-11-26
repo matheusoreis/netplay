@@ -119,6 +119,21 @@ func select(character_id: int, account_id: int) -> Array:
 	return [OK, model]
 
 
+func delete(character_id: int, account_id: int) -> Array:
+	if not await is_owner(character_id, account_id):
+		return [ERR_DOES_NOT_EXIST, "CHARACTER_NOT_FOUND"]
+
+	var result: Error = await _exec(
+		"DELETE FROM characters WHERE id = ? AND account_id = ?",
+		[character_id, account_id]
+	)
+
+	if result != OK:
+		return [ERR_DATABASE_CANT_WRITE, "DATABASE_ERROR"]
+
+	return [OK, null]
+
+
 func update_location(character_id: int, map_id: int, cell: Vector2i, facing: Vector2i) -> Array:
 	var result: Error = await _exec(
 		"UPDATE characters SET map_id = ?, cell_x = ?, cell_y = ?, facing_x = ?, facing_y = ?, updated_at = ? WHERE id = ?",
