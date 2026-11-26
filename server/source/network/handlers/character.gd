@@ -25,16 +25,16 @@ func _register_handlers() -> void:
 func characters_of_account() -> void:
 	var sender_id: int = _network.sender_id()
 
-	var account: Account = _account_of(sender_id, &"list_characters")
+	var account: Account = _account_of(sender_id, &"characters_of_account")
 	if account == null:
 		return
 
 	var result: Array = await _character_manager.of_account(account.id)
 	if result[0] != OK:
-		_network.exec(sender_id, &"list_characters", [false, result[1]])
+		_network.exec(sender_id, &"characters_of_account", [false, result[1]])
 		return
 
-	_network.exec(sender_id, &"list_characters", [true, (result[1] as Array[Character]).map(
+	_network.exec(sender_id, &"characters_of_account", [true, (result[1] as Array[Character]).map(
 		func(character: Character) -> Array:
 			return [character.id, character.identifier, character.spritesheet]
 	)])
