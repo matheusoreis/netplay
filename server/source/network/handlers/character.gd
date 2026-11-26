@@ -13,7 +13,6 @@ func _init(network: Network.Server, account_manager: AccountManager, character_m
 	_character_manager = character_manager
 
 
-
 func _register_handlers() -> void:
 	_network.register([
 		characters_of_account,
@@ -21,7 +20,6 @@ func _register_handlers() -> void:
 		delete_character,
 		select_character
 	])
-
 
 
 func characters_of_account() -> void:
