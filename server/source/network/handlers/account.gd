@@ -37,7 +37,7 @@ func sign_up(email: String, password: String, major: int, minor: int, revision: 
 	var sender_id: int = _network.sender_id()
 
 	if not _is_version_valid(major, minor, revision):
-		return _network.exec(sender_id, &"sign_in", [false, "OUTDATED_CLIENT"])
+		return _network.exec(sender_id, &"sign_up", [false, "OUTDATED_CLIENT"])
 
 	var result: Array = await _account_manager.sign_up(sender_id, email, password)
 	if result[0] != OK:

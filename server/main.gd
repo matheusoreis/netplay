@@ -32,13 +32,12 @@ func _ready() -> void:
 	if not await _start_database():
 		return
 
-	_start_network(
-		_kind_from_args(transport_kind)
-	)
+	await _load_maps()
 
-	await _map_manager.load_all()
-	await _map_collision_manager.load_all()
-	await _map_warp_manager.load_all()
+	if not _start_network(
+		_kind_from_args(transport_kind)
+	):
+		return
 
 
 func _physics_process(_delta: float) -> void:
@@ -68,9 +67,16 @@ func _start_database() -> bool:
 	_database = database
 
 	await _setup_repositories()
+	_setup_managers()
 
 	print("[DATABASE] Banco de dados iniciado com sucesso!")
 	return true
+
+
+func _load_maps() -> void:
+	await _map_manager.load_all()
+	await _map_collision_manager.load_all()
+	await _map_warp_manager.load_all()
 
 
 func _start_network(kind: Enums.TransportKind) -> bool:
@@ -103,8 +109,6 @@ func _start_network(kind: Enums.TransportKind) -> bool:
 	if err != OK:
 		push_error("[SERVER] Erro ao iniciar o servidor (%s)." % error_string(err))
 		return false
-
-	_setup_managers()
 
 	print("[SERVER] Servidor iniciado com sucesso!")
 	return true
@@ -171,6 +175,9 @@ func _release(peer_id: int) -> void:
 
 
 func _shutdown() -> void:
+	if _character_manager == null:
+		return
+
 	for peer_id: int in _character_manager.peers():
 		await _release(peer_id)
 
