@@ -7,6 +7,7 @@ extends Node2D
 var _network: Network.Server
 var _database: Database
 
+@warning_ignore("unused_private_class_variable")
 var _loop: Loop
 
 var _account_repository: AccountRepository
