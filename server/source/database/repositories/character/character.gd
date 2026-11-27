@@ -19,6 +19,7 @@ func _setup_schema() -> void:
 			account_id INTEGER NOT NULL,
 
 			FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
+			FOREIGN KEY (map_id) REFERENCES maps(id) ON DELETE RESTRICT,
 
 			UNIQUE (account_id, identifier)
 		)

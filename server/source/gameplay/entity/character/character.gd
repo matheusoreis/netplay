@@ -23,3 +23,9 @@ func _init(
 	self.access_at = access_at
 	self.created_at = created_at
 	self.updated_at = updated_at
+
+
+func warp(map: int, cell: Vector2i, facing: Vector2i) -> void:
+	self.map = map
+	self.cell = cell
+	self.facing = facing

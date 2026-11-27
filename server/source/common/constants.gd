@@ -33,6 +33,22 @@ const CELL_DOWN: int = Enums.CellFlag.DOWN
 const CELL_LEFT: int = Enums.CellFlag.LEFT
 
 
+const CARDINAL_DIRECTIONS: Array[Vector2i] = [
+	Vector2i.UP,
+	Vector2i.DOWN,
+	Vector2i.LEFT,
+	Vector2i.RIGHT,
+]
+
+const NEAR_OFFSETS: Array[Vector2i] = [
+	Vector2i.ZERO,
+	Vector2i.DOWN,
+	Vector2i.UP,
+	Vector2i.LEFT,
+	Vector2i.RIGHT,
+]
+
+
 const ROLE_NONE: int = Enums.Role.NONE
 const ROLE_MODERATOR: int = Enums.Role.MODERATOR
 const ROLE_ADMIN: int = Enums.Role.ADMIN

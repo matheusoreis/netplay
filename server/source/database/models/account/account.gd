@@ -13,11 +13,11 @@ var updated_at: int
 
 func to_array() -> Array:
 	return [
-		self.id,
-		self.email,
-		self.password,
-		self.role,
-		self.access_at,
-		self.created_at,
-		self.updated_at
+		id,
+		email,
+		password,
+		role,
+		access_at,
+		created_at,
+		updated_at
 	]

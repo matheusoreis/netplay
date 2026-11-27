@@ -25,15 +25,22 @@ func has(peer_id: int) -> bool:
 	return _accounts.has(peer_id)
 
 
-func remove(peer_id: int) -> void:
-	var account: Account = by_peer(peer_id)
-	if account == null:
-		return
+func is_online(account_id: int) -> bool:
+	for account: Account in _accounts.values():
+		if account.id == account_id:
+			return true
 
+	return false
+
+
+func remove(peer_id: int) -> void:
 	_accounts.erase(peer_id)
 
 
 func sign_in(peer_id: int, email: String, password: String) -> Array:
+	if has(peer_id):
+		return [ERR_ALREADY_IN_USE, "ALREADY_SIGNED_IN"]
+
 	var check: Array = _validate(email, password)
 	if check[0] != OK:
 		return check
@@ -43,11 +50,18 @@ func sign_in(peer_id: int, email: String, password: String) -> Array:
 		return result
 
 	var model: AccountModel = result[1]
+
+	if has(peer_id):
+		return [ERR_ALREADY_IN_USE, "ALREADY_SIGNED_IN"]
+
+	if is_online(model.id):
+		return [ERR_ALREADY_IN_USE, "ACCOUNT_IN_USE"]
+
 	_accounts[peer_id] = _hydrate(model)
 
 	await _repository.update_access_at(model.id)
 
-	return [OK, ""]
+	return [OK, null]
 
 
 func sign_up(peer_id: int, email: String, password: String) -> Array:

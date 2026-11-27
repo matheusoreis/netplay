@@ -27,5 +27,5 @@ func _init(
 
 
 func move(direction: Vector2i) -> void:
-	facing = direction
-	cell += direction
+	self.facing = direction
+	self.cell += direction

@@ -21,6 +21,12 @@ func all() -> Array[Character]:
 	return result
 
 
+func peers() -> Array[int]:
+	var result: Array[int] = []
+	result.assign(_characters.keys())
+	return result
+
+
 func has(peer_id: int) -> bool:
 	return _characters.has(peer_id)
 
@@ -79,6 +85,8 @@ func select(peer_id: int, account_id: int, character_id: int) -> Array:
 	var character: Character = _hydrate(result[1] as CharacterModel)
 	_characters[peer_id] = character
 
+	await _repository.update_access_at(character.id)
+
 	return [OK, character]
 
 
@@ -86,11 +94,7 @@ func delete(account_id: int, character_id: int) -> Array:
 	if is_online(character_id):
 		return [ERR_ALREADY_IN_USE, "CHARACTER_IN_USE"]
 
-	var result: Array = await _repository.delete(character_id, account_id)
-	if result[0] != OK:
-		return result
-
-	return [OK, null]
+	return await _repository.delete(character_id, account_id)
 
 
 func remove(peer_id: int) -> void:
@@ -98,12 +102,14 @@ func remove(peer_id: int) -> void:
 	if character == null:
 		return
 
-	await _repository.update_location(
+	var result: Array = await _repository.update_location(
 		character.id,
 		character.map_id,
 		character.cell,
 		character.facing
 	)
+	if result[0] != OK:
+		push_error("[CHARACTER] Falha ao salvar o personagem %d." % character.id)
 
 	_characters.erase(peer_id)
 
